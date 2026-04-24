@@ -32,28 +32,24 @@ import Footer from "../Components/Footer";
 const contributors = [
   {
     name: "Hardik Dhawan",
-    githubId: "HardikDhawan9311",
-    role: "Full Stack Developer",
-    avatar: "https://github.com/HardikDhawan9311.png",
+    github: "https://github.com/HardikDhawan9311",
+    linkedin: "https://www.linkedin.com/in/hardikk-dhawann?utm_source=share_via&utm_content=profile&utm_medium=member_android"
   },
   {
     name: "Harsh Gupta",
-    githubId: "RealHarshGupta",
-    role: "Developer",
-    avatar: "https://github.com/RealHarshGupta.png",
+    github: "https://github.com/RealHarshGupta",
+    linkedin: "https://www.linkedin.com/in/harsh-gupta-22a24a286?utm_source=share_via&utm_content=profile&utm_medium=member_android"
   },
   {
-    name: "Vanshika Batra",
-    githubId: "vanshikabatra200504-stack",
-    role: "Frontend Developer",
-    avatar: "https://github.com/vanshikabatra200504-stack.png",
+    name: "Vanshika",
+    github: "https://github.com/vanshikabatra200504-stack",
+    linkedin: "https://www.linkedin.com/in/vanshika-batra-91493a2a9?utm_source=share_via&utm_content=profile&utm_medium=member_android"
   },
   {
-    name: "Contributor 4",
-    githubId: "contributor4",
-    role: "UI/UX Designer",
-    avatar: "https://github.com/contributor4.png",
-  },
+    name: "Harsh Kumar",
+    github: "https://github.com/Harsh-1711",
+    linkedin: "https://www.linkedin.com/in/harshh-dev?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+  }
 ];
 
 const faqs = [
@@ -142,7 +138,6 @@ function useInView(threshold = 0.15) {
 
 function ContributorCard({ contributor, index }) {
   const [ref, inView] = useInView(0.1);
-  const [imgError, setImgError] = useState(false);
 
   return (
     <div
@@ -153,43 +148,33 @@ function ContributorCard({ contributor, index }) {
         transform: inView ? "translateY(0)" : "translateY(32px)",
         transition: "opacity 0.55s ease, transform 0.55s ease",
       }}
-      className="group relative bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl p-6 flex flex-col items-center gap-4 hover:shadow-xl hover:shadow-[#7F5AF0]/10 hover:-translate-y-1 transition-all duration-300"
+      className="group relative bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:shadow-xl hover:shadow-[#7F5AF0]/10 hover:-translate-y-1 transition-all duration-300"
     >
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#7F5AF0]/10 to-[#C77DFF]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
 
-      <div className="relative">
-        <div className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-[#7F5AF0]/30 group-hover:ring-[#C77DFF]/60 transition-all duration-300">
-          {!imgError ? (
-            <img
-              src={contributor.avatar}
-              alt={contributor.name}
-              className="w-full h-full object-cover"
-              onError={() => setImgError(true)}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#7F5AF0] to-[#C77DFF] text-white text-2xl font-bold">
-              {contributor.name.charAt(0)}
-            </div>
-          )}
-        </div>
-        <div className="absolute bottom-1 right-1 w-4 h-4 bg-[#7F5AF0] border-2 border-white dark:border-[#0d0b14] rounded-full flex items-center justify-center">
-          <Github size={8} className="text-white" />
-        </div>
-      </div>
-
       <div className="text-center">
-        <p className="font-bold text-gray-900 dark:text-white text-base">{contributor.name}</p>
-        <p className="text-xs text-[#7F5AF0] font-semibold mt-0.5">{contributor.role}</p>
-        <a
-          href={`https://github.com/${contributor.githubId}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 mt-3 text-xs text-gray-500 dark:text-gray-400 hover:text-[#7F5AF0] dark:hover:text-[#C77DFF] transition-colors font-mono"
-        >
-          <Github size={12} />
-          @{contributor.githubId}
-          <ExternalLink size={10} />
-        </a>
+        <p className="font-bold text-gray-900 dark:text-white text-xl mb-4">{contributor.name}</p>
+        
+        <div className="flex items-center justify-center gap-4">
+          <a
+            href={contributor.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-3 rounded-xl bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-[#7F5AF0] dark:hover:text-[#C77DFF] hover:bg-[#7F5AF0]/10 dark:hover:bg-[#7F5AF0]/20 transition-all duration-300"
+            title="GitHub"
+          >
+            <Github size={20} />
+          </a>
+          <a
+            href={contributor.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-3 rounded-xl bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-[#7F5AF0] dark:hover:text-[#C77DFF] hover:bg-[#7F5AF0]/10 dark:hover:bg-[#7F5AF0]/20 transition-all duration-300"
+            title="LinkedIn"
+          >
+            <Linkedin size={20} />
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -248,7 +233,7 @@ const AboutUs = () => {
       <Navbar />
 
       {/* 0. Collaboration Header */}
-      <div className="w-full bg-white/80 dark:bg-[#1A1625]/40 backdrop-blur-sm border-b border-gray-100 dark:border-white/5 py-12 px-6 relative z-50">
+      <div className="w-full bg-white/80 dark:bg-[#1A1625]/40 backdrop-blur-sm border-b border-gray-100 dark:border-white/5 py-12 px-6 relative z-10">
         <div className="max-w-7xl mx-auto flex flex-col items-center space-y-8">
           <div className="flex items-center justify-center gap-14 md:gap-24">
             {/* Logo: BitePass */}
@@ -388,7 +373,7 @@ const AboutUs = () => {
           {contributors.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
               {contributors.map((c, i) => (
-                <ContributorCard key={c.githubId} contributor={c} index={i} />
+                <ContributorCard key={i} contributor={c} index={i} />
               ))}
             </div>
           ) : (

@@ -11,6 +11,8 @@ import Events from "./pages/Events";
 import ParticipantDetails from "./pages/ParticipantDetails";
 import AboutUs from "./pages/AboutUs";
 import SuperAdmin from "./pages/SuperAdmin";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import { getToken, decodeToken } from "./utils/auth";
 import { Toaster } from "react-hot-toast";
 
@@ -100,6 +102,8 @@ function App() {
           />
 
           <Route path="/about" element={<AboutUs />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
         </Routes>
       </Router>
     </ThemeProvider>

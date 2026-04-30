@@ -167,7 +167,7 @@
 
 
 import { useState } from "react";
-import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import { FaUser, FaLock, FaEnvelope, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { saveToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
@@ -180,6 +180,7 @@ const SignUp = () => {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -218,12 +219,21 @@ const SignUp = () => {
             <div key={i} className="relative">
               <field.icon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
               <input
-                type={field.type || "text"}
+                type={field.name === "password" ? (showPassword ? "text" : "password") : (field.type || "text")}
                 name={field.name}
                 placeholder={field.placeholder}
                 onChange={handleChange}
-                className="w-full pl-12 py-3 rounded-xl bg-gray-100 dark:bg-white/15 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 outline-none focus:ring-2 focus:ring-[#7F5AF0]"
+                className={`w-full pl-12 py-3 rounded-xl bg-gray-100 dark:bg-white/15 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 outline-none focus:ring-2 focus:ring-[#7F5AF0] ${field.name === "password" ? "pr-12" : ""}`}
               />
+              {field.name === "password" && (
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#7F5AF0] transition-colors focus:outline-none"
+                >
+                  {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                </button>
+              )}
             </div>
           ))}
 

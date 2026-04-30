@@ -7,9 +7,21 @@ import { toast } from "react-hot-toast";
 const QRScannerModal = ({ onClose, eventId, activeMeal, onChangeMeal }) => {
   const [history, setHistory] = useState([]);
   const [scanning, setScanning] = useState(false);
+  const [scanResult, setScanResult] = useState(null);
   
-  const handleScan = async (data) => {
-    if (data && !scanning) {
+  // Refs to avoid recreating handleScan and restarting the camera
+  const scanningRef = React.useRef(false);
+  const activeMealRef = React.useRef(activeMeal);
+  const eventIdRef = React.useRef(eventId);
+
+  useEffect(() => {
+    activeMealRef.current = activeMeal;
+    eventIdRef.current = eventId;
+  }, [activeMeal, eventId]);
+  
+  const handleScan = React.useCallback(async (data) => {
+    if (data && !scanningRef.current) {
+      scanningRef.current = true;
       setScanning(true);
       const tokenId = data.text || data;
       
@@ -20,8 +32,8 @@ const QRScannerModal = ({ onClose, eventId, activeMeal, onChangeMeal }) => {
         audio.play().catch(() => {});
 
         const res = await api.post("/participants/scan", {
-          event_id: eventId,
-          meal_id: activeMeal?.meal_id,
+          event_id: eventIdRef.current,
+          meal_id: activeMealRef.current?.meal_id,
           token_id: tokenId
         });
 
@@ -35,9 +47,13 @@ const QRScannerModal = ({ onClose, eventId, activeMeal, onChangeMeal }) => {
         
         setHistory(prev => [newEntry, ...prev].slice(0, 5));
         toast.success(`Success: ${res.data.name || "Member"}`);
+        setScanResult("success");
         
-        // Wait 1.5s before next scan
-        setTimeout(() => setScanning(false), 1500);
+        setTimeout(() => {
+          setScanning(false);
+          setScanResult(null);
+          scanningRef.current = false;
+        }, 1500);
       } catch (err) {
         if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
         const errorMsg = err.response?.data?.error || err.response?.data?.message || "Scan Failed";
@@ -50,15 +66,20 @@ const QRScannerModal = ({ onClose, eventId, activeMeal, onChangeMeal }) => {
         };
         setHistory(prev => [newEntry, ...prev].slice(0, 5));
         toast.error(errorMsg);
-        setTimeout(() => setScanning(false), 2000);
+        setScanResult("error");
+        setTimeout(() => {
+          setScanning(false);
+          setScanResult(null);
+          scanningRef.current = false;
+        }, 2000);
       }
 
     }
-  };
+  }, []);
 
-  const handleError = (err) => {
+  const handleError = React.useCallback((err) => {
     console.error("QR Scanner Error:", err);
-  };
+  }, []);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -105,14 +126,21 @@ const QRScannerModal = ({ onClose, eventId, activeMeal, onChangeMeal }) => {
               
               {/* Scanning indicator */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className={`w-64 h-64 border-2 border-[#7F5AF0]/40 rounded-3xl transition-transform duration-500 ${scanning ? 'scale-110 border-green-500/60' : 'scale-100'}`}></div>
+                <div className={`w-64 h-64 border-2 border-[#7F5AF0]/40 rounded-3xl transition-transform duration-500 ${scanning ? 'scale-110' : 'scale-100'} ${scanResult === 'success' ? 'border-green-500/60' : scanResult === 'error' ? 'border-red-500/60' : ''}`}></div>
                 <div className="absolute w-[200px] h-[2px] bg-[#7F5AF0]/60 blur-sm animate-pulse shadow-[0_0_15px_rgba(127,90,240,0.8)]"></div>
               </div>
 
-              {scanning && (
+              {scanResult === 'success' && (
                 <div className="absolute inset-0 bg-green-500/10 backdrop-blur-[2px] flex items-center justify-center pointer-events-none animate-in fade-in duration-300">
                   <div className="bg-green-500 p-4 rounded-full shadow-[0_0_30px_rgba(34,197,94,0.6)]">
                     <Check size={48} className="text-white" strokeWidth={3} />
+                  </div>
+                </div>
+              )}
+              {scanResult === 'error' && (
+                <div className="absolute inset-0 bg-red-500/10 backdrop-blur-[2px] flex items-center justify-center pointer-events-none animate-in fade-in duration-300">
+                  <div className="bg-red-500 p-4 rounded-full shadow-[0_0_30px_rgba(239,68,68,0.6)]">
+                    <X size={48} className="text-white" strokeWidth={3} />
                   </div>
                 </div>
               )}

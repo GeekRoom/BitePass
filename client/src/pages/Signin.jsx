@@ -143,7 +143,7 @@
 
 
 import { useState } from "react";
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { saveToken, decodeToken } from "../utils/auth";
 import { toast } from "react-hot-toast";
@@ -156,6 +156,7 @@ const SignIn = () => {
   });
   const [loading, setLoading] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) =>
@@ -228,14 +229,21 @@ const SignIn = () => {
                     <FaLock size={20} />
                   </div>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="Enter admin password"
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="w-full pl-12 pr-4 py-3.5 bg-gray-100 dark:bg-[#0D0B14] border border-gray-200 dark:border-white/10 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#7F5AF0] focus:ring-1 focus:ring-[#7F5AF0] transition-all"
+                    className="w-full pl-12 pr-12 py-3.5 bg-gray-100 dark:bg-[#0D0B14] border border-gray-200 dark:border-white/10 rounded-2xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#7F5AF0] focus:ring-1 focus:ring-[#7F5AF0] transition-all"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#7F5AF0] transition-colors focus:outline-none"
+                  >
+                    {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                  </button>
                 </div>
               </div>
 

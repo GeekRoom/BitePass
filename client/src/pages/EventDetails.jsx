@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { AlertCircle, Upload, FileText, UploadCloud, FileSpreadsheet, X, Search, Calendar, Users, Activity, Mail, QrCode, Trash2, Power, Pencil, Plus } from "lucide-react";
+import { AlertCircle, Upload, FileText, UploadCloud, FileSpreadsheet, X, Search, Calendar, Users, Activity, Mail, QrCode, Trash2, Power, Pencil, Plus, CheckCircle, XCircle } from "lucide-react";
 import Navbar from "../Components/NavBar";
 import QRScannerModal from "../Components/QRScannerModal";
 import { toast } from "react-hot-toast";
@@ -27,6 +27,7 @@ export default function EventDetails() {
   const [participants, setParticipants] = useState([]);
   const [groupedTeams, setGroupedTeams] = useState({});
   const [search, setSearch] = useState("");
+  const [filterEaten, setFilterEaten] = useState("all");
 
   // Pagination State for Logs
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,19 +82,26 @@ export default function EventDetails() {
     try {
       const res = await api.get(`/participants/logs?event_id=${id}`);
       setParticipants(res.data);
-      groupByTeam(res.data, search);
+      groupByTeam(res.data, search, filterEaten);
     } catch (err) {
       console.error("Failed to fetch logs:", err);
     }
   };
 
-  const groupByTeam = (data, searchTerm) => {
+  const groupByTeam = (data, searchTerm, filterStatus) => {
     const grouped = {};
     data.forEach((p) => {
-      if (
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.team_name.toLowerCase().includes(searchTerm.toLowerCase())
-      ) {
+      const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          p.team_name.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      let matchFilter = true;
+      if (filterStatus === "eaten") {
+        matchFilter = p.meals_eaten > 0;
+      } else if (filterStatus === "not_eaten") {
+        matchFilter = p.meals_eaten === 0;
+      }
+
+      if (matchSearch && matchFilter) {
         if (!grouped[p.team_name]) grouped[p.team_name] = [];
         grouped[p.team_name].push(p);
       }
@@ -106,12 +114,12 @@ export default function EventDetails() {
   }, [activeTab, id]);
 
   useEffect(() => {
-    groupByTeam(participants, search);
-  }, [search, participants]);
+    groupByTeam(participants, search, filterEaten);
+  }, [search, participants, filterEaten]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, itemsPerPage, participants]);
+  }, [search, filterEaten, itemsPerPage, participants]);
 
   const getBoxColor = (check_in, meals_eaten) => {
     if (check_in === "No" || check_in === 0) return "bg-gray-800 border-gray-700";
@@ -640,6 +648,50 @@ export default function EventDetails() {
                     <Plus size={16} />
                     Add Member
                   </button>
+                  <div className="flex bg-black/40 border border-white/10 rounded-xl p-1 w-full sm:w-auto shrink-0 shadow-inner">
+                    <button
+                      onClick={() => setFilterEaten("all")}
+                      className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
+                        filterEaten === "all" 
+                          ? "bg-gradient-to-r from-[#7F5AF0] to-[#C77DFF] text-white shadow-lg" 
+                          : "text-gray-400 hover:text-white hover:bg-white/10"
+                      }`}
+                    >
+                      <Users size={14} />
+                      <span>All</span>
+                      <span className={`px-1.5 py-0.5 rounded-md text-[10px] ${filterEaten === "all" ? "bg-white/20" : "bg-black/30"}`}>
+                        {participants.length}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => setFilterEaten("eaten")}
+                      className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
+                        filterEaten === "eaten" 
+                          ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg" 
+                          : "text-gray-400 hover:text-white hover:bg-white/10"
+                      }`}
+                    >
+                      <CheckCircle size={14} />
+                      <span>Eaten</span>
+                      <span className={`px-1.5 py-0.5 rounded-md text-[10px] ${filterEaten === "eaten" ? "bg-white/20" : "bg-black/30"}`}>
+                        {totalEaten}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => setFilterEaten("not_eaten")}
+                      className={`flex items-center justify-center gap-2 flex-1 sm:flex-none px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 ${
+                        filterEaten === "not_eaten" 
+                          ? "bg-gradient-to-r from-red-500 to-rose-500 text-white shadow-lg" 
+                          : "text-gray-400 hover:text-white hover:bg-white/10"
+                      }`}
+                    >
+                      <XCircle size={14} />
+                      <span>Not Eaten</span>
+                      <span className={`px-1.5 py-0.5 rounded-md text-[10px] ${filterEaten === "not_eaten" ? "bg-white/20" : "bg-black/30"}`}>
+                        {totalNotEaten}
+                      </span>
+                    </button>
+                  </div>
                   <div className="relative w-full sm:w-72">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input

@@ -4,6 +4,8 @@ dotenv.config();
 const express = require("express");
 const db = require("./src/config/db");
 const cors = require("cors");
+const path = require("path");
+const fs = require("fs");
 
 const app = express();
 
@@ -11,8 +13,9 @@ const app = express();
 app.use(express.json());
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://bite-pass.vercel.app"
-];
+  "https://bite-pass.vercel.app",
+  process.env.FRONTEND_URL
+].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -61,6 +64,16 @@ app.use("/emails", emailRoutes);
 app.use("/generation",emailRoutes)
 app.use("/events", eventRoutes);
 app.use("/admin", adminRoutes);
+
+// Optional: Serve frontend static files if they exist (for unified deployments like Render)
+const clientBuildPath = path.join(__dirname, "../client/dist");
+if (fs.existsSync(clientBuildPath)) {
+  console.log("✅ Serving static frontend from:", clientBuildPath);
+  app.use(express.static(clientBuildPath));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(clientBuildPath, "index.html"));
+  });
+}
 
 // Start server
 const PORT = process.env.PORT || 5000;

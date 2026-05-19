@@ -134,83 +134,73 @@ export default function ParticipantDetails() {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Participant Profile</h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column: QR Code and Basic Info */}
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-100 dark:border-white/20 rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center">
-              <div className="w-48 h-48 bg-white rounded-2xl p-2 mb-6 shadow-glow overflow-hidden">
-                {participant.qr_code ? (
-                  <img src={participant.qr_code} alt="QR Code" className="w-full h-full object-contain" />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
-                    <Info size={32} className="mb-2" />
-                    <p className="text-xs">QR Not Available</p>
-                  </div>
-                )}
-              </div>
-              <h2 className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">{participant.name}</h2>
-              <p className="text-[#C77DFF] font-medium mb-4">{participant.team_name}</p>
-              
-              <div className="w-full h-px bg-gray-200 dark:bg-white/10 mb-6"></div>
-              
-              <button
-                onClick={handleSendMail}
-                disabled={sendingMail || !participant.qr_code}
-                className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-bold transition duration-300 ${
-                  sendingMail || !participant.qr_code
-                    ? "bg-gray-600/50 cursor-not-allowed text-gray-400"
-                    : "bg-gradient-to-r from-[#7B2CBF] to-[#C77DFF] hover:shadow-[0_0_20px_rgba(199,125,255,0.4)] hover:scale-[1.02]"
-                }`}
-              >
-                {sendingMail ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
-                ) : (
-                  <>
-                    <Mail size={20} />
-                    Send Mail
-                  </>
-                )}
-              </button>
-              {!participant.qr_code && (
-                <p className="text-xs text-red-400 mt-2">QR code required to send mail</p>
-              )}
+        {/* Hero Section */}
+        <div className="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-100 dark:border-white/20 rounded-3xl p-8 shadow-2xl mb-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#C77DFF]/20 rounded-full blur-3xl"></div>
+          
+          <div className="flex-1 space-y-2 z-10 text-center md:text-left">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
+              <span className="px-3 py-1 bg-[#C77DFF]/20 text-[#C77DFF] rounded-full text-xs font-bold uppercase tracking-wider">
+                Participant
+              </span>
             </div>
-
-            {/* Status Section */}
-            <div className="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-100 dark:border-white/20 rounded-3xl p-6 shadow-xl space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
-                <Info size={20} className="text-[#C77DFF]" /> Status
-              </h3>
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/5">
-                <span className="text-gray-500 dark:text-gray-400">Meals Eaten</span>
-                <span className="text-[#C77DFF] font-bold text-xl">{participant.meals_eaten}</span>
-              </div>
-            </div>
+            <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white">{participant.name}</h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300">
+              Team <span className="text-[#C77DFF] font-bold">{participant.team_name}</span>
+            </p>
           </div>
 
-          {/* Right Column: Detailed Info and Event Details */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 z-10 w-full md:w-auto">
+            <div className="flex flex-col items-center justify-center p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/10 min-w-[120px]">
+              <span className="text-3xl font-bold text-[#C77DFF]">{participant.meals_eaten}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider mt-1">Meals Eaten</span>
+            </div>
+            
+            <button
+              onClick={handleSendMail}
+              disabled={sendingMail}
+              className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-bold transition duration-300 w-full sm:w-auto ${
+                sendingMail
+                  ? "bg-gray-600/50 cursor-not-allowed text-gray-400"
+                  : "bg-gradient-to-r from-[#7B2CBF] to-[#C77DFF] text-white hover:shadow-[0_0_20px_rgba(199,125,255,0.4)] hover:scale-[1.02]"
+              }`}
+            >
+              {sendingMail ? (
+                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+              ) : (
+                <>
+                  <Mail size={20} />
+                  Send Mail
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left Column */}
+          <div className="space-y-8">
+            {/* Detailed Info */}
             <div className="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-100 dark:border-white/20 rounded-3xl p-8 shadow-xl">
-              <h3 className="text-xl font-bold mb-8 text-gray-900 dark:text-white">Detailed Information</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">Detailed Information</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <InfoItem label="Full Name" value={participant.name} />
                 <InfoItem label="Email Address" value={participant.email} />
                 <InfoItem label="Team Name" value={participant.team_name} />
-                <InfoItem label="Token ID" value={participant.token_id} />
               </div>
             </div>
 
+            {/* Event Participation */}
             <div className="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-100 dark:border-white/20 rounded-3xl p-8 shadow-xl">
               <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-gray-900 dark:text-white">
                 <Calendar className="text-[#C77DFF]" /> Event Participation
               </h3>
               
-              <div className="p-6 bg-gradient-to-r from-[#7B2CBF]/20 to-transparent border border-[#7B2CBF]/30 rounded-2xl">
-                <p className="text-gray-400 text-sm mb-1">Registered Event</p>
-                <h4 className="text-2xl font-bold">{participant.event_name}</h4>
+              <div className="p-6 bg-gradient-to-r from-[#7B2CBF]/10 to-transparent border border-[#7B2CBF]/30 rounded-2xl">
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-1">Registered Event</p>
+                <h4 className="text-2xl font-bold text-gray-900 dark:text-white">{participant.event_name}</h4>
                 <div className="mt-4 flex gap-4">
-                   <div className="px-4 py-1.5 bg-white/10 rounded-full text-xs font-semibold text-[#C77DFF] border border-[#C77DFF]/30">
+                   <div className="px-4 py-1.5 bg-[#C77DFF]/10 rounded-full text-xs font-semibold text-[#C77DFF] border border-[#C77DFF]/30">
                      Active Participation
                    </div>
                 </div>
@@ -221,7 +211,7 @@ export default function ParticipantDetails() {
             {teamMembers.length > 0 && (
               <div className="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-100 dark:border-white/20 rounded-3xl p-8 shadow-xl">
                 <h3 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">Other Team Members</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-4">
                   {teamMembers.map((member) => (
                     <div
                       key={member.id}
@@ -242,12 +232,14 @@ export default function ParticipantDetails() {
                 </div>
               </div>
             )}
-            
-            {/* Meal Schedule Section */}
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-xl">
+          </div>
+          
+          {/* Right Column: Meal Schedule Section */}
+          <div className="space-y-8">
+            <div className="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-100 dark:border-white/20 rounded-3xl p-8 shadow-xl">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-bold">Meal Schedule & Status</h3>
-                <div className="px-3 py-1 bg-white/5 rounded-full text-[10px] font-bold text-gray-400 uppercase tracking-widest border border-white/10">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Meal Schedule & Status</h3>
+                <div className="px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-full text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest border border-gray-200 dark:border-white/10">
                   Admin Control
                 </div>
               </div>
@@ -261,36 +253,36 @@ export default function ParticipantDetails() {
                   {mealSchedule.map((meal) => (
                     <div 
                       key={meal.meal_id}
-                      className="group flex flex-col md:flex-row md:items-center justify-between p-5 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/[0.08] transition-all duration-300"
+                      className="group flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/[0.08] transition-all duration-300"
                     >
-                      <div className="flex items-start gap-4 mb-4 md:mb-0">
-                        <div className={`mt-1 h-3 w-3 rounded-full ${meal.is_scanned ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-gray-600'}`}></div>
+                      <div className="flex items-start gap-4 mb-4 sm:mb-0">
+                        <div className={`mt-1.5 h-3 w-3 rounded-full shrink-0 ${meal.is_scanned ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-gray-300 dark:bg-gray-600'}`}></div>
                         <div>
                           <p className="font-bold text-lg leading-tight mb-1 text-gray-900 dark:text-white">{meal.meal_name}</p>
-                          <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                              <span className="flex items-center gap-1">
                                <Calendar size={12} className="text-[#C77DFF]" />
                                {formatDate(meal.date)}
                              </span>
-                             <span className="h-1 w-1 rounded-full bg-gray-600"></span>
+                             <span className="h-1 w-1 rounded-full bg-gray-400 dark:bg-gray-600"></span>
                              <span>{formatTime(meal.start_time)} - {formatTime(meal.end_time)}</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-4 ml-7 sm:ml-0">
                         <div className="flex flex-col items-end mr-2">
-                           <span className={`text-[10px] font-bold uppercase tracking-widest ${meal.is_scanned ? 'text-green-400' : 'text-gray-500'}`}>
+                           <span className={`text-[10px] font-bold uppercase tracking-widest ${meal.is_scanned ? 'text-green-500 dark:text-green-400' : 'text-gray-500'}`}>
                              {meal.is_scanned ? 'Scanned' : 'Pending'}
                            </span>
-                           <span className="text-[10px] text-gray-600">Manual Override</span>
+                           <span className="text-[10px] text-gray-400 dark:text-gray-600">Manual Override</span>
                         </div>
                         
                         <button
                           onClick={() => handleToggleMeal(meal.meal_id)}
                           disabled={togglingMealId === meal.meal_id}
-                          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none ${
-                            meal.is_scanned ? 'bg-green-500/80 shadow-[0_0_15px_rgba(34,197,94,0.3)]' : 'bg-gray-700'
+                          className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors focus:outline-none ${
+                            meal.is_scanned ? 'bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.3)]' : 'bg-gray-300 dark:bg-gray-700'
                           }`}
                         >
                           <span className="sr-only">Toggle Scan</span>
